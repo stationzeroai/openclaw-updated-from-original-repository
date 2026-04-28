@@ -8,6 +8,10 @@ Docs: https://docs.openclaw.ai
 
 - Channels: add Yuanbao channel docs entrance so the Tencent Yuanbao bot appears in the channel listing and sidebar navigation. (#73443) Thanks @loongfay.
 
+### Fixes
+
+- Plugin SDK: restore memory-host package subpath re-exports so local and packed OpenClaw builds emit the declared `dist/plugin-sdk/*` artifacts for external plugin consumers. Thanks @cahuecsbeltrao.
+
 ## 2026.4.27
 
 ### Changes

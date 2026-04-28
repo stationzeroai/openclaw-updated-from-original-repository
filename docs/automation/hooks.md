@@ -177,7 +177,12 @@ openclaw hooks enable <hook-name>
 
 ### session-memory details
 
-Extracts the last 15 user/assistant messages, generates a descriptive filename slug via LLM, and saves to `<workspace>/memory/YYYY-MM-DD-slug.md` using the host local date. Requires `workspace.dir` to be configured.
+Extracts the last 15 user/assistant messages, generates a descriptive filename slug via LLM, and saves to `<workspace>/memory/YYYY-MM-DD-slug.md` using the host local date. The hook uses the current session workspace when available, then falls back to the resolved agent/default workspace.
+
+Use this bundled hook when you want `/new` or `/reset` to preserve recent
+conversation context into searchable memory files. The hook is not active until
+you enable it or otherwise configure internal hooks; memory search by itself
+does not create these files. See [What creates memory](/concepts/memory#what-creates-memory).
 
 <a id="bootstrap-extra-files"></a>
 

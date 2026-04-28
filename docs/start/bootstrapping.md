@@ -22,6 +22,9 @@ On the first agent run, OpenClaw bootstraps the workspace (default
 - Writes identity + preferences to `IDENTITY.md`, `USER.md`, `SOUL.md`.
 - Removes `BOOTSTRAP.md` when finished so it only runs once.
 
+Bootstrapping recognizes memory files when they already exist, but it does not
+seed `MEMORY.md` or create `memory/`. See [What creates memory](/concepts/memory#what-creates-memory).
+
 ## Skipping bootstrapping
 
 To skip this for a pre-seeded workspace, run `openclaw onboard --skip-bootstrap`.

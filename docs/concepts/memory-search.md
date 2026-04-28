@@ -11,6 +11,11 @@ read_when:
 wording differs from the original text. It works by indexing memory into small
 chunks and searching them using embeddings, keywords, or both.
 
+Memory search is a retrieval system, not a capture system. By default it
+indexes existing `MEMORY.md` and `memory/*.md` files; it does not create those
+files or save session transcripts. For the full list of mechanisms that can
+write memory, see [What creates memory](/concepts/memory#what-creates-memory).
+
 ## Quick start
 
 If you have a GitHub Copilot subscription, OpenAI, Gemini, Voyage, or Mistral
@@ -136,10 +141,20 @@ earlier conversations. This is opt-in via
 `memorySearch.experimental.sessionMemory`. See the
 [configuration reference](/reference/memory-config) for details.
 
+Session transcript indexing adds stored conversations to the search corpus, but
+it does not write `MEMORY.md` or daily memory notes. Use the
+[`session-memory` hook](/automation/hooks#session-memory-details) when you want
+`/new` or `/reset` to save recent session context into memory files.
+
 ## Troubleshooting
 
 **No results?** Run `openclaw memory status` to check the index. If empty, run
 `openclaw memory index --force`.
+
+**`memory directory missing` or `0/0 files`?** This is expected for a fresh
+agent until `MEMORY.md` or `memory/*.md` exists. Ask the agent to remember
+something, enable the `session-memory` hook for `/new` and `/reset`, or wait
+for a pre-compaction memory flush in a long session.
 
 **Only keyword matches?** Your embedding provider may not be configured. Check
 `openclaw memory status --deep`.

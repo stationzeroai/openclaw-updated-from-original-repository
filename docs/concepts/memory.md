@@ -15,17 +15,34 @@ hidden state.
 Your agent has three memory-related files:
 
 - **`MEMORY.md`** — long-term memory. Durable facts, preferences, and
-  decisions. Loaded at the start of every DM session.
+  decisions. Loaded at the start of every DM session when present.
 - **`memory/YYYY-MM-DD.md`** — daily notes. Running context and observations.
-  Today and yesterday's notes are loaded automatically.
+  Recent daily notes can be preloaded for bare `/new` and `/reset` startup
+  context when present, and are otherwise available through memory tools.
 - **`DREAMS.md`** (optional) — Dream Diary and dreaming sweep
   summaries for human review, including grounded historical backfill entries.
 
 These files live in the agent workspace (default `~/.openclaw/workspace`).
 
+## What creates memory
+
+OpenClaw separates memory storage, recall, and capture. A fresh workspace may
+have no `MEMORY.md` file and no `memory/` directory yet.
+
+| Mechanism                         | Default                                     | What it writes                                                                                                                                                        |
+| --------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workspace bootstrap               | On for new agents                           | Seeds identity and bootstrap files, but does not create `MEMORY.md` or `memory/`.                                                                                     |
+| Agent prompt                      | On                                          | Tells the model to create or update memory files when useful, for example when you say "remember this".                                                               |
+| `memory_search` indexing          | On by default with the active memory plugin | Indexes existing `MEMORY.md` and `memory/*.md` files. It does not create memory files.                                                                                |
+| Pre-compaction memory flush       | On                                          | Runs a silent agentic turn near compaction or a configured transcript-size threshold, and may create or append `memory/YYYY-MM-DD.md`. It does not write `MEMORY.md`. |
+| `session-memory` hook             | Off until enabled                           | Saves recent context from `/new` and `/reset` into `memory/YYYY-MM-DD-slug.md`.                                                                                       |
+| Session transcript indexing       | Off                                         | Indexes stored session transcripts for search when `memorySearch.experimental.sessionMemory` is enabled. It does not write Markdown memory files.                     |
+| Dreaming                          | Off                                         | Deep promotion can write durable entries to `MEMORY.md`; diary output goes to `DREAMS.md` and related dreaming files.                                                 |
+| `openclaw memory promote --apply` | Manual                                      | Appends selected short-term memory candidates into `MEMORY.md`.                                                                                                       |
+
 <Tip>
 If you want your agent to remember something, just ask it: "Remember that I
-prefer TypeScript." It will write it to the appropriate file.
+prefer TypeScript." It can write the fact to the appropriate file.
 </Tip>
 
 ## Memory tools
@@ -107,7 +124,7 @@ dashboards, bridge mode, and Obsidian-friendly workflows.
 ## Automatic memory flush
 
 Before [compaction](/concepts/compaction) summarizes your conversation, OpenClaw
-runs a silent turn that reminds the agent to save important context to memory
+can run a silent turn that reminds the agent to save important context to memory
 files. This is on by default — you do not need to configure anything.
 
 To keep that housekeeping turn on a local model, set an exact memory-flush model
@@ -131,9 +148,9 @@ The override applies only to the memory-flush turn and does not inherit the
 active session fallback chain.
 
 <Tip>
-The memory flush prevents context loss during compaction. If your agent has
-important facts in the conversation that are not yet written to a file, they
-will be saved automatically before the summary happens.
+The memory flush reduces context loss during compaction. If important facts are
+not yet written to a file, OpenClaw asks a silent agentic turn to append them to
+the daily memory file before the summary happens.
 </Tip>
 
 ## Dreaming

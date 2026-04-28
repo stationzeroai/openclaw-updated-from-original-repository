@@ -58,6 +58,11 @@ openclaw memory index --agent main --verbose
 
 If `memory status` shows `Dreaming status: blocked`, the managed dreaming cron is enabled but the heartbeat that drives it is not firing for the default agent. See [Dreaming never runs](/concepts/dreaming#dreaming-never-runs-status-shows-blocked) for the two common causes.
 
+If `memory status` shows `0/0 files` or `memory directory missing`, the active
+workspace has no memory files yet. This is normal for a fresh agent: memory
+search indexes existing `MEMORY.md` and `memory/*.md` files, but it does not
+create them. See [What creates memory](/concepts/memory#what-creates-memory).
+
 `memory index`:
 
 - `--force`: force a full reindex.
